@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Transmission Job Form</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --purple:#5E46F8;--purple2:#7C5CFF;--purple-dark:#251C90;--purple-light:#F0EDFF;
+    --green:#18A66A;--green-light:#ECFFF6;
+    --red:#E04848;--amber:#F59E0B;
+    --bg:#F7F7FB;--card:#fff;--border:#E7E7F0;
+    --text:#12142F;--text2:#60627A;--text3:#9B9CAF;
+    --radius:22px;--radius-sm:16px;--shadow:0 12px 30px rgba(25,27,58,.08);
+  }
+  html{background:var(--bg);}
+  body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .page{width:100%;max-width:430px;margin:0 auto;padding:14px 14px 90px;}
+
+  /* HEADER */
+  .form-header{position:relative;overflow:hidden;background:linear-gradient(135deg,#3026B8 0%,#5B47F5 54%,#7559FF 100%);border-radius:24px;padding:28px 22px 26px;margin:4px 0 14px;box-shadow:0 16px 32px rgba(73,65,232,.28);color:#fff;}
+  .form-header:after{content:"";position:absolute;right:-60px;top:-55px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.10);}
+  .header-main{position:relative;z-index:1;display:flex;gap:16px;align-items:center;margin-bottom:14px;}
+  .header-icon{width:62px;height:62px;border-radius:18px;border:3px solid rgba(255,255,255,.55);display:flex;align-items:center;justify-content:center;font-size:34px;line-height:1;background:rgba(255,255,255,.09);box-shadow:inset 0 0 0 1px rgba(255,255,255,.12);}
+  .form-title{font-size:26px;line-height:1.08;font-weight:800;letter-spacing:-.04em;color:#fff;}
+  .form-title .zh{font-size:12px;color:rgba(255,255,255,.72);font-weight:500;display:block;margin-top:5px;letter-spacing:0;}
+  .form-desc{position:relative;z-index:1;font-size:14px;color:rgba(255,255,255,.90);line-height:1.55;max-width:330px;}
+  .sheet-row{background:var(--card);border-radius:18px;padding:15px 16px;margin:0 0 14px;border:1px solid rgba(231,231,240,.9);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .sheet-status{font-size:13px;color:var(--text3);font-weight:600;display:flex;align-items:center;gap:8px;}
+  .sheet-status.connected{color:var(--green);}
+  .sheet-status.connected:before{content:'✓';width:22px;height:22px;border-radius:999px;background:var(--green);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;}
+  .setup-btn{font-size:12px;padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:#fff;color:var(--purple);font-family:inherit;cursor:pointer;font-weight:700;white-space:nowrap;}
+
+  /* PROGRESS */
+  .pbar-wrap{display:none;}
+  .sec-head{position:relative;background:var(--card);border:1px solid rgba(231,231,240,.9);border-radius:22px;padding:20px 18px 20px 76px;margin:0 0 14px;box-shadow:var(--shadow);min-height:78px;}
+  .sec-head:before{content:'📋';position:absolute;left:20px;top:18px;width:42px;height:42px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;box-shadow:0 10px 18px rgba(94,70,248,.22);}
+  .sec-title{font-size:18px;line-height:1.2;font-weight:800;color:var(--text);letter-spacing:-.02em;}
+  .sec-title span{display:none;}
+  .sec-head:after{content:"";position:absolute;left:76px;right:18px;bottom:18px;height:8px;border-radius:999px;background:linear-gradient(90deg,var(--purple) 0 32%,#ECECF4 32% 100%);}
+
+  /* CARDS */
+  .fcard{background:var(--card);border:1px solid rgba(231,231,240,.95);border-radius:22px;padding:20px 18px;margin-bottom:16px;box-shadow:var(--shadow);}
+  .fcard.hidden{display:none;}
+  .field-wrap{margin-bottom:14px;position:relative;}
+  .field-wrap:last-child{margin-bottom:0;}
+  .qlabel{font-size:15px;font-weight:800;color:var(--text);margin-bottom:8px;letter-spacing:-.01em;}
+  .qlabel .zh{font-size:11px;color:var(--text3);font-weight:500;display:block;margin-top:2px;}
+  .req{color:var(--red);}
+  .hint{font-size:13px;color:var(--text2);margin-bottom:14px;margin-top:0;}
+  input[type=text],input[type=number],input[type=date],textarea{
+    width:100%;font-size:16px;padding:16px 16px 16px 48px;border:1.5px solid #E2E3EC;border-radius:16px;background:#fff;color:var(--text);outline:none;font-family:inherit;-webkit-appearance:none;transition:border .15s,box-shadow .15s;
+  }
+  input::placeholder,textarea::placeholder{color:#9A9CAC;}
+  input:focus,textarea:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(94,70,248,.10);}
+  textarea{resize:vertical;min-height:96px;line-height:1.5;padding-left:16px;}
+
+  /* vehicle card layout */
+  .vehicle-card{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .vehicle-card .field-wrap{margin:0;border:1.5px solid #E7E8F0;border-radius:18px;padding:15px 14px;background:#fff;}
+  .vehicle-card .field-wrap:nth-child(1),.vehicle-card .field-wrap:nth-child(4){grid-column:1/-1;}
+  .vehicle-card input{border:none;box-shadow:none!important;padding:10px 8px 6px 42px;border-radius:0;background:transparent;}
+  .vehicle-card input:focus{border:none;box-shadow:none;}
+  .vehicle-card .field-wrap:before{position:absolute;left:18px;bottom:19px;color:var(--purple);font-size:22px;line-height:1;}
+  .vehicle-card .field-wrap:nth-child(1):before{content:'🚙';}
+  .vehicle-card .field-wrap:nth-child(2):before{content:'📅';}
+  .vehicle-card .field-wrap:nth-child(3):before{content:'▣';font-size:20px;}
+  .vehicle-card .field-wrap:nth-child(4):before{content:'🧭';}
+  .vehicle-card .qlabel{margin-bottom:2px;}
+
+  /* GEARBOX TYPE */
+  .gear-card{position:relative;padding-top:22px;}
+  .gear-card>.qlabel{font-size:17px;margin-left:44px;margin-bottom:2px;}
+  .gear-card>.hint{margin-left:44px;}
+  .gear-card:before{content:'⚙️';position:absolute;left:18px;top:23px;font-size:32px;color:var(--purple);}
+  .type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px;}
+  .type-card{position:relative;display:grid;grid-template-columns:42px 1fr;align-items:center;width:100%;text-align:left;font-family:inherit;border:1.5px solid #E1E2EB;border-radius:18px;padding:14px 12px;cursor:pointer;transition:all .16s;min-height:82px;-webkit-tap-highlight-color:transparent;background:#fff;-webkit-appearance:none;appearance:none;touch-action:manipulation;}
+  .type-card:before{grid-row:1/4;color:var(--purple);font-size:27px;line-height:1;text-align:center;}
+  #tc-AT:before{content:'⌘';} #tc-CVT:before{content:'⚙';} #tc-DCT:before{content:'⚙';} #tc-DSG:before{content:'⚙';} #tc-MT:before{content:'╋';} #tc-AMT:before{content:'🤖';font-size:25px;}
+  .type-card.sel{border-color:var(--purple);background:var(--purple-light);box-shadow:0 0 0 4px rgba(94,70,248,.09);}
+  .type-name{font-size:18px;font-weight:800;color:var(--text);line-height:1.1;}
+  .type-card.sel .type-name{color:var(--purple-dark);}
+  .type-full{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.25;}
+  .type-zh{display:none;}
+
+  /* CHECKBOXES */
+  .chk-list{display:flex;flex-direction:column;gap:8px;}
+  .chk-row{display:flex;align-items:center;gap:12px;padding:15px 14px;border:1.5px solid #E7E8F0;border-radius:16px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .1s,border .1s;}
+  .chk-row:active{background:#F4F2FF;}
+  .chk-row input[type=checkbox]{width:22px;height:22px;accent-color:var(--purple);flex-shrink:0;cursor:pointer;margin:0;}
+  .clabel{font-size:15px;color:var(--text);flex:1;line-height:1.4;font-weight:700;}
+  .czh{font-size:12px;color:var(--text3);margin-left:4px;font-weight:500;}
+  .other-txt{flex:1;font-size:15px;padding:10px;border:none;border-bottom:1px solid var(--border);background:transparent;color:var(--text);outline:none;min-width:60px;font-family:inherit;border-radius:0;}
+
+  /* GEAR GRID */
+  .gear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;}
+  .gbtn{border:1.5px solid #E1E2EB;border-radius:14px;padding:13px 4px;text-align:center;font-size:13px;font-weight:700;cursor:pointer;color:var(--text2);background:#fff;-webkit-tap-highlight-color:transparent;user-select:none;transition:all .1s;font-family:inherit;touch-action:manipulation;-webkit-appearance:none;appearance:none;}
+  .gbtn.on{background:var(--purple-light);border-color:var(--purple);color:var(--purple-dark);}
+
+  /* UPLOAD */
+  .upload-box{border:2px dashed #DCDDEC;border-radius:18px;padding:26px 16px;text-align:center;cursor:pointer;transition:background .15s;-webkit-tap-highlight-color:transparent;background:#FAFAFE;}
+  .upload-box:active{background:#F0EDFF;}
+  .uico{font-size:34px;color:var(--purple);margin-bottom:6px;}
+  .utxt{font-size:15px;color:var(--text);font-weight:800;}
+  .usub{font-size:12px;color:var(--text3);margin-top:4px;}
+  .flist{margin-top:10px;display:flex;flex-direction:column;gap:6px;}
+  .fitem{display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--bg);border-radius:14px;font-size:13px;color:var(--text2);}
+  .fn{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .fdel{cursor:pointer;color:var(--text3);font-size:20px;padding:0 4px;line-height:1;font-weight:300;}
+
+  /* NAV */
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0 2px;}
+  .btn-next{background:linear-gradient(135deg,var(--purple),var(--purple2));color:#fff;border:none;border-radius:18px;padding:17px 26px;font-size:17px;font-weight:800;cursor:pointer;font-family:inherit;min-width:140px;text-align:center;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-shadow:0 12px 22px rgba(94,70,248,.25);}
+  #sec1 .btn-next{width:100%;}
+  .btn-next:active{transform:translateY(1px);filter:brightness(.96);}
+  .btn-back{background:#fff;border:1.5px solid var(--border);border-radius:16px;color:var(--purple);font-size:15px;cursor:pointer;padding:16px 18px;font-family:inherit;font-weight:800;touch-action:manipulation;}
+
+  /* SUCCESS */
+  .scard{display:none;background:var(--card);border-radius:24px;padding:32px 20px;text-align:center;box-shadow:var(--shadow);border:1px solid rgba(231,231,240,.95);}
+  .job-badge{display:inline-block;background:var(--purple-light);color:var(--purple-dark);font-family:ui-monospace,Menlo,monospace;font-size:22px;font-weight:900;padding:14px 24px;border-radius:18px;margin:14px 0;letter-spacing:.06em;border:2px solid rgba(94,70,248,.28);}
+  .sum-box{background:var(--bg);border-radius:18px;padding:16px;text-align:left;margin:16px 0;font-size:13px;color:var(--text2);line-height:2.05;}
+  .sum-box b{color:var(--text);}
+  .abtn{display:inline-block;padding:14px 24px;font-size:14px;font-weight:800;border-radius:16px;border:1.5px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;margin-top:4px;font-family:inherit;}
+
+  /* MODAL */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;padding:16px;align-items:flex-end;justify-content:center;}
+  .modal-bg.show{display:flex;}
+  .modal{background:var(--card);border-radius:24px 24px 0 0;padding:20px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;}
+  .modal-title{font-size:16px;font-weight:800;color:var(--text);margin-bottom:16px;}
+  .modal-step{display:flex;gap:10px;margin-bottom:14px;align-items:flex-start;}
+  .mnum{width:24px;height:24px;border-radius:50%;background:var(--purple);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .mtext{font-size:13px;color:var(--text2);line-height:1.7;flex:1;}
+  .mtext b{color:var(--text);}
+  .mtext code{background:var(--bg);padding:2px 6px;border-radius:4px;font-size:12px;color:var(--purple);}
+  .url-inp{width:100%;font-size:15px;padding:12px;border:1.5px solid var(--border);border-radius:16px;background:var(--card);color:var(--text);margin:8px 0;outline:none;font-family:inherit;}
+  .url-save{width:100%;padding:14px;font-size:15px;font-weight:800;border-radius:16px;border:none;background:var(--purple);color:#fff;cursor:pointer;font-family:inherit;}
+  .modal-close{width:100%;padding:12px;font-size:14px;border-radius:16px;border:1.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;margin-top:8px;font-family:inherit;}
+  .ok-strip{background:var(--green-light);border-radius:16px;padding:10px 14px;font-size:13px;color:var(--green);margin:8px 0;font-weight:700;}
+  .warn-strip{background:#FFF8E1;border-radius:16px;padding:10px 14px;font-size:13px;color:#7B5800;margin:8px 0;}
+
+  @media (max-width:370px){
+    .page{padding-left:10px;padding-right:10px;}
+    .form-title{font-size:23px;}
+    .header-icon{width:54px;height:54px;font-size:30px;}
+    .type-card{grid-template-columns:34px 1fr;padding:12px 10px;}
+    .type-name{font-size:16px;}
+    .type-full{font-size:11px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <div class="pbar-wrap">
+    <div class="pbar-seg active" id="ps1"></div>
+    <div class="pbar-seg" id="ps2"></div>
+    <div class="pbar-seg" id="ps3"></div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div id="sec1">
+    <div class="form-header">
+      <div class="header-main">
+        <div class="header-icon">⚙</div>
+        <div class="form-title">Transmission Job Form <span class="zh">变速箱工单</span></div>
+      </div>
+      <div class="form-desc">Gearbox Service &amp; Repair<br>Fill in the form to open a job. A unique Job ID will be generated for tracking.</div>
+    </div>
+    <div class="sheet-row">
+      <div class="sheet-status connected" id="sheet-status">Connected to Google Sheet via Apps Script</div>
+      <button class="setup-btn" onclick="alert('This version runs inside Google Apps Script. No Sheet URL setup needed.')">Apps Script</button>
+    </div>
+    <div class="sec-head"><div class="sec-title">Section 1 of 3 — Vehicle Info <span style="font-weight:400;color:var(--text3);">车辆资料</span></div></div>
+
+    <div class="fcard vehicle-card">
+      <div class="field-wrap">
+        <div class="qlabel">Car make &amp; model <span class="req">*</span><span class="zh">车款</span></div>
+        <input type="text" id="s1-car" placeholder="e.g. Proton Waja 1.6" autocomplete="off">
+      </div>
+      <div class="field-wrap">
+        <div class="qlabel">Year <span class="req">*</span><span class="zh">年份</span></div>
+        <input type="number" id="s1-year" placeholder="e.g. 2016" inputmode="numeric" min="1990" max="2030">
+      </div>
+      <div class="field-wrap">
+        <div class="qlabel">Plate number <span class="zh">车牌</span></div>
+        <input type="text" id="s1-plate" placeholder="e.g. WXX 1234" style="text-transform:uppercase;" autocomplete="off">
+      </div>
+      <div class="field-wrap" style="margin-bottom:0">
+        <div class="qlabel">Mileage (km) <span class="zh">行驶里程</span></div>
+        <input type="number" id="s1-mileage" placeholder="e.g. 120000" inputmode="numeric">
+      </div>
+    </div>
+
+    <div class="fcard gear-card">
+      <div class="qlabel">Gearbox type <span class="req">*</span><span class="zh">变速箱类型</span></div>
+      <div class="hint">Tap to select 点击选择</div>
+      <div class="type-grid">
+        <button type="button" class="type-card" id="tc-AT" onclick="selType('AT')"><div class="type-name">AT</div><div class="type-full">Automatic<br>Transmission</div><div class="type-zh">自动变速箱</div></button>
+        <button type="button" class="type-card" id="tc-CVT" onclick="selType('CVT')"><div class="type-name">CVT</div><div class="type-full">Continuously<br>Variable</div><div class="type-zh">无级变速箱</div></button>
+        <button type="button" class="type-card" id="tc-DCT" onclick="selType('DCT')"><div class="type-name">DCT</div><div class="type-full">Dual Clutch<br>Transmission</div><div class="type-zh">双离合变速箱</div></button>
+        <button type="button" class="type-card" id="tc-DSG" onclick="selType('DSG')"><div class="type-name">DSG</div><div class="type-full">Direct Shift<br>Gearbox</div><div class="type-zh">大众双离合</div></button>
+        <button type="button" class="type-card" id="tc-MT" onclick="selType('MT')"><div class="type-name">MT</div><div class="type-full">Manual<br>Transmission</div><div class="type-zh">手动变速箱</div></button>
+        <button type="button" class="type-card" id="tc-AMT" onclick="selType('AMT')"><div class="type-name">AMT</div><div class="type-full">Automated<br>Manual</div><div class="type-zh">电控手动变速箱</div></button>
+      </div>
+    </div>
+
+    <div class="nav"><div></div><button class="btn-next" onclick="goSec(2)">Next →</button></div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div id="sec2" style="display:none">
+    <div class="sec-head"><div class="sec-title">Section 2 of 3 — Symptoms <span style="font-weight:400;color:var(--text3);">故障症状</span></div></div>
+
+    <div class="fcard">
+      <div class="qlabel">When does this happen? <span class="req">*</span><span class="zh">几时发生？</span></div>
+      <div class="chk-list">
+        <label class="chk-row"><input type="checkbox" name="when" value="Cold Start"><span class="clabel">Cold Start <span class="czh">冷车</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="when" value="After warm up"><span class="clabel">After warm up <span class="czh">热车后</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="when" value="During traffic jam"><span class="clabel">During traffic jam <span class="czh">堵车中</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="when" value="Always"><span class="clabel">Always <span class="czh">一直存在</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="when" value="Other"><span class="clabel">Other:</span><input class="other-txt" type="text" placeholder="describe..."></label>
+      </div>
+    </div>
+
+    <div class="fcard">
+      <div class="qlabel">Symptoms observed <span class="req">*</span><span class="zh">什么症状？</span></div>
+      <div class="chk-list">
+        <label class="chk-row"><input type="checkbox" name="sym" value="Jerking" onchange="toggleSub('sub-jerk',this)"><span class="clabel">Jerking <span class="czh">顿挫</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Slipping" onchange="toggleSub('sub-slip',this)"><span class="clabel">Slipping <span class="czh">打滑</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Delay engagement" onchange="toggleSub('sub-delay',this)"><span class="clabel">Delay engagement <span class="czh">进牙迟钝</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Cannot engage gear" onchange="toggleSub('sub-noengage',this)"><span class="clabel">Cannot engage gear <span class="czh">无法进牙</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Abnormal noise" onchange="toggleSub('sub-noise',this)"><span class="clabel">Abnormal noise <span class="czh">异响</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Overheat"><span class="clabel">Overheat <span class="czh">过热</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Oil Leaks"><span class="clabel">Oil Leaks <span class="czh">漏油</span></span></label>
+        <label class="chk-row"><input type="checkbox" name="sym" value="Other"><span class="clabel">Other:</span><input class="other-txt" type="text" placeholder="describe..."></label>
+      </div>
+    </div>
+
+    <div class="fcard hidden" id="sub-jerk">
+      <div class="qlabel">Jerking — which gear? <span class="zh">顿挫 几号到几号牙？</span></div>
+      <div class="hint">Tap all that apply</div>
+      <div class="gear-grid" id="grid-jerk"></div>
+    </div>
+    <div class="fcard hidden" id="sub-slip">
+      <div class="qlabel">Slipping — which gear? <span class="zh">打滑 几号到几号牙？</span></div>
+      <div class="hint">Tap all that apply</div>
+      <div class="gear-grid" id="grid-slip"></div>
+    </div>
+    <div class="fcard hidden" id="sub-delay">
+      <div class="qlabel">Delay Engagement — position? <span class="zh">进牙迟钝</span></div>
+      <div class="hint">Tap all that apply</div>
+      <div class="gear-grid" id="grid-delay"></div>
+    </div>
+    <div class="fcard hidden" id="sub-noengage">
+      <div class="qlabel">Cannot Engage — which position? <span class="zh">无法进牙</span></div>
+      <div class="chk-list">
+        <label class="chk-row"><input type="checkbox" name="noengage" value="D"><span class="clabel">D</span></label>
+        <label class="chk-row"><input type="checkbox" name="noengage" value="R"><span class="clabel">R</span></label>
+        <label class="chk-row"><input type="checkbox" name="noengage" value="Manual mode"><span class="clabel">Manual mode</span></label>
+      </div>
+    </div>
+    <div class="fcard hidden" id="sub-noise">
+      <div class="qlabel">Abnormal noise — location <span class="zh">哪里出现异响</span></div>
+      <div class="hint">e.g. bearing, final gear, torque converter</div>
+      <textarea id="noise-desc" placeholder="Describe location and type..."></textarea>
+    </div>
+
+    <div class="nav"><button class="btn-back" onclick="goSec(1)">← Back</button><button class="btn-next" onclick="goSec(3)">Next →</button></div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div id="sec3" style="display:none">
+    <div class="sec-head"><div class="sec-title">Section 3 of 3 — Report &amp; Advisor <span style="font-weight:400;color:var(--text3);">报告与顾问</span></div></div>
+
+    <div class="fcard">
+      <div class="qlabel">Upload scan report / photos <span class="zh">上传故障码照片</span></div>
+      <div class="hint">Scan report, warning lights, error codes</div>
+      <div class="upload-box" onclick="document.getElementById('file-inp').click()">
+        <div class="uico">📎</div>
+        <div class="utxt">Tap to upload 点击上传</div>
+        <div class="usub">Photos · PDF · Scan report</div>
+      </div>
+      <input type="file" id="file-inp" multiple accept="image/*,.pdf" style="display:none" onchange="addFiles(this)">
+      <div class="flist" id="flist"></div>
+    </div>
+
+    <div class="fcard">
+      <div class="field-wrap">
+        <div class="qlabel">Additional remarks <span class="zh">其他备注</span></div>
+        <textarea id="s3-remarks" placeholder="e.g. Issue started 2 months ago..."></textarea>
+      </div>
+      <div class="field-wrap">
+        <div class="qlabel">Service advisor name <span class="req">*</span><span class="zh">服务顾问</span></div>
+        <input type="text" id="s3-tech" placeholder="Name">
+      </div>
+      <div class="field-wrap" style="margin-bottom:0">
+        <div class="qlabel">Date <span class="req">*</span><span class="zh">日期</span></div>
+        <input type="date" id="s3-date">
+      </div>
+    </div>
+
+    <div class="nav"><button class="btn-back" onclick="goSec(2)">← Back</button><button class="btn-next" onclick="submitForm()" id="submit-btn">Submit 提交</button></div>
+  </div>
+
+  <!-- SUCCESS -->
+  <div class="scard" id="scard">
+    <div style="font-size:44px;">✅</div>
+    <div style="font-size:18px;font-weight:700;color:var(--text);margin:10px 0 4px;">Job opened! 工单已开启</div>
+    <div style="font-size:13px;color:var(--text2);">Official Job ID</div>
+    <div class="job-badge" id="job-id-display">TXN-000000</div>
+    <div id="sheet-result" style="margin:4px 0;font-size:13px;"></div>
+    <div class="sum-box" id="sum-box"></div>
+    <button class="abtn" onclick="anotherEntry()">New job 新工单</button>
+  </div>
+</div>
+
+<!-- SETUP MODAL -->
+<div class="modal-bg" id="setup-modal">
+  <div class="modal">
+    <div class="modal-title">⚙ Connect Google Sheet</div>
+    <div id="conn-badge" style="display:none" class="ok-strip">✓ Sheet connected</div>
+
+    <div class="modal-step">
+      <div class="mnum">1</div>
+      <div class="mtext">Go to <b>sheets.google.com</b> → create a new sheet → rename the tab to <code>Jobs</code> → paste headers in row 1:<br>
+        <div style="background:#F4F4F8;border-radius:6px;padding:8px;margin:6px 0;font-size:11px;font-family:monospace;word-break:break-all;color:#333;">Job ID | Date | Car | Year | Plate | Mileage | Gearbox Type | When | Symptoms | Jerking Gears | Slipping Gears | Delay Gears | Cannot Engage | Noise | Remarks | Advisor | Status</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="mnum">2</div>
+      <div class="mtext">In the sheet → <b>Extensions → Apps Script</b> → delete all existing code → paste this:<br>
+        <div style="background:#F4F4F8;border-radius:6px;padding:10px;margin:6px 0;font-size:10px;font-family:monospace;word-break:break-all;color:#333;line-height:1.7;">function doPost(e){<br>
+&nbsp;&nbsp;var s=SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Jobs");<br>
+&nbsp;&nbsp;var d=JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;var today=Utilities.formatDate(new Date(),"Asia/Kuala_Lumpur","yyMMdd");<br>
+&nbsp;&nbsp;var last=s.getLastRow();<br>
+&nbsp;&nbsp;var count=0;<br>
+&nbsp;&nbsp;if(last&gt;1){<br>
+&nbsp;&nbsp;&nbsp;&nbsp;var ids=s.getRange(2,1,last-1,1).getValues().flat();<br>
+&nbsp;&nbsp;&nbsp;&nbsp;count=ids.filter(function(id){return String(id).indexOf("SF-"+today)===0;}).length;<br>
+&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;var jobId="SF-"+today+"-"+String(count+1).padStart(3,"0");<br>
+&nbsp;&nbsp;s.appendRow([jobId,d.date,d.car,d.year,d.plate,d.mileage,d.gearboxType,d.when,d.symptoms,d.jerkGears,d.slipGears,d.delayGears,d.noEngagePos,d.noiseDetails,d.remarks,d.advisor,"Pending"]);<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify({status:"ok",jobId:jobId})).setMimeType(ContentService.MimeType.JSON);<br>
+}</div>
+      </div>
+    </div>
+
+    <div class="modal-step">
+      <div class="mnum">3</div>
+      <div class="mtext"><b>Deploy → New deployment → Web app</b><br>Execute as: <b>Me</b> · Who has access: <b>Anyone</b><br>→ Authorise → Copy the URL ending in <code>/exec</code></div>
+    </div>
+
+    <div class="modal-step" style="margin-bottom:0">
+      <div class="mnum">4</div>
+      <div class="mtext">Paste your Web App URL here:
+        <input class="url-inp" type="url" id="url-inp" placeholder="https://script.google.com/macros/s/.../exec">
+        <div class="warn-strip">⚠ Make sure URL ends with <b>/exec</b> — not /edit or /dev</div>
+        <button class="url-save" onclick="saveUrl()">Save &amp; Connect</button>
+        <div id="url-result" style="margin-top:8px;font-size:13px;"></div>
+      </div>
+    </div>
+
+    <button class="modal-close" onclick="document.getElementById('setup-modal').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<script>
+let selGearType='';
+
+const gFull=['1→2','2→3','3→4','4→5','5→6','6→7','7→8','8→9','9→10','P→D','D→R','R→D'];
+const gSlip=['1→2','2→3','3→4','4→5','5→6','6→7','7→8','8→9','9→10'];
+const gDelay=['P→D','P→R','D→R','R→D'];
+function mkGrid(id,items){document.getElementById(id).innerHTML=items.map(v=>`<button type="button" class="gbtn" onclick="this.classList.toggle('on')" data-v="${v}">${v}</button>`).join('');}
+mkGrid('grid-jerk',gFull);mkGrid('grid-slip',gSlip);mkGrid('grid-delay',gDelay);
+
+function selType(t){selGearType=t;['AT','CVT','DCT','DSG','MT','AMT'].forEach(k=>document.getElementById('tc-'+k).classList.toggle('sel',k===t));}
+function toggleSub(id,chk){document.getElementById(id).classList.toggle('hidden',!chk.checked);}
+
+function goSec(n){
+  if(n===2&&!document.getElementById('s1-car').value.trim()){alert('Please enter car make/model.');return;}
+  if(n===2&&!selGearType){alert('Please select a gearbox type.');return;}
+  [1,2,3].forEach(i=>{document.getElementById('sec'+i).style.display='none';});
+  document.getElementById('sec'+n).style.display='block';
+  ['ps1','ps2','ps3'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    el.className='pbar-seg'+(i+1<n?' done':i+1===n?' active':'');
+  });
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function addFiles(inp){
+  const list=document.getElementById('flist');
+  Array.from(inp.files).forEach(f=>{
+    const d=document.createElement('div');d.className='fitem';
+    d.innerHTML=`<span>📄</span><span class="fn">${f.name}</span><span class="fdel" onclick="this.parentElement.remove()">×</span>`;
+    list.appendChild(d);
+  });
+}
+
+function getGears(id){return [...document.querySelectorAll(`#${id} .gbtn.on`)].map(b=>b.dataset.v).join(', ')||'—';}
+
+
+async function submitForm(){
+  const tech=document.getElementById('s3-tech').value.trim();
+  if(!tech){alert('Please enter service advisor name.');return;}
+  const btn=document.getElementById('submit-btn');
+  btn.textContent='Saving...';btn.disabled=true;
+
+  const mileage=document.getElementById('s1-mileage').value;
+  const payload={
+    date:document.getElementById('s3-date').value,
+    car:document.getElementById('s1-car').value.trim(),
+    year:document.getElementById('s1-year').value||'—',
+    plate:document.getElementById('s1-plate').value.toUpperCase()||'—',
+    mileage:mileage?Number(mileage).toLocaleString()+' km':'—',
+    gearboxType:selGearType,
+    when:[...document.querySelectorAll('input[name=when]:checked')].map(c=>c.value).join(', ')||'—',
+    symptoms:[...document.querySelectorAll('input[name=sym]:checked')].map(c=>c.value).join(', ')||'—',
+    jerkGears:getGears('grid-jerk'),
+    slipGears:getGears('grid-slip'),
+    delayGears:getGears('grid-delay'),
+    noEngagePos:[...document.querySelectorAll('input[name=noengage]:checked')].map(c=>c.value).join(', ')||'—',
+    noiseDetails:document.getElementById('noise-desc').value||'—',
+    remarks:document.getElementById('s3-remarks').value||'—',
+    advisor:tech
+  };
+
+  document.getElementById('job-id-display').textContent='Generating...';
+  document.getElementById('sheet-result').innerHTML='<span style="color:var(--text3)">Saving to Google Sheet...</span>';
+  document.getElementById('sum-box').innerHTML=
+    `<b>Vehicle</b> ${payload.car} (${payload.year})<br>`+
+    `<b>Plate</b> ${payload.plate}<br>`+
+    `<b>Mileage</b> ${payload.mileage}<br>`+
+    `<b>Gearbox</b> ${payload.gearboxType}<br>`+
+    `<b>When</b> ${payload.when}<br>`+
+    `<b>Symptoms</b> ${payload.symptoms}<br>`+
+    `<b>Advisor</b> ${payload.advisor}`;
+
+  [1,2,3].forEach(i=>document.getElementById('sec'+i).style.display='none');
+  document.getElementById('scard').style.display='block';
+  ['ps1','ps2','ps3'].forEach(id=>document.getElementById(id).className='pbar-seg done');
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  if(!(window.google && google.script && google.script.run)){
+    document.getElementById('job-id-display').textContent='Open Apps Script URL';
+    document.getElementById('sheet-result').innerHTML='<span style="color:var(--red)">⚠ This page must be opened from the Apps Script Web App URL, not GitHub Pages or local HTML.</span>';
+    btn.textContent='Submit 提交';btn.disabled=false;
+    return;
+  }
+
+  google.script.run
+    .withSuccessHandler(function(result){
+      if(result && result.status==='ok'){
+        document.getElementById('job-id-display').textContent=result.jobId;
+        document.getElementById('sheet-result').innerHTML='<span style="color:var(--green)">✓ Saved to Google Sheet</span>';
+      }else{
+        document.getElementById('job-id-display').textContent='Error';
+        document.getElementById('sheet-result').innerHTML='<span style="color:var(--red)">⚠ Save failed. Please try again.</span>';
+      }
+      btn.textContent='Submit 提交';btn.disabled=false;
+    })
+    .withFailureHandler(function(err){
+      document.getElementById('job-id-display').textContent='Error';
+      document.getElementById('sheet-result').innerHTML='<span style="color:var(--red)">⚠ Could not save: '+(err.message||err)+'</span>';
+      btn.textContent='Submit 提交';btn.disabled=false;
+    })
+    .saveJob(payload);
+}
+
+function saveUrl(){alert('This Apps Script version does not need a Web App URL.');}
+
+function anotherEntry(){
+  document.querySelectorAll('input[type=text],input[type=number],input[type=date],textarea').forEach(el=>el.value='');
+  document.querySelectorAll('input[type=checkbox]').forEach(el=>el.checked=false);
+  document.querySelectorAll('.gbtn').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('[id^=sub-]').forEach(el=>el.classList.add('hidden'));
+  document.getElementById('flist').innerHTML='';
+  document.getElementById('scard').style.display='none';
+  selGearType='';
+  ['AT','CVT','DCT','DSG','MT','AMT'].forEach(k=>document.getElementById('tc-'+k).classList.remove('sel'));
+  document.getElementById('s3-date').value=new Date().toISOString().split('T')[0];
+  goSec(1);
+}
+document.getElementById('s3-date').value=new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
